@@ -1,88 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>FormBuilder Pro</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
-</head>
-<body>
-
-    <!-- 1. SIDEBAR -->
+  </head>
+  <body>
+    <!-- SIDEBAR -->
     <div class="sidebar">
-        <div class="sidebar-header">
-            <h2>PDF<span class="logo-span">Form</span>Builder</h2>
-            <a href="/" class="back-link">← New</a>
+      <div class="sidebar-header">
+        <div class="brand-area">
+          <h2>PDF<span class="logo-span">Builder</span></h2>
+          <a href="/" class="back-link">← New Project</a>
+        </div>
+        <!-- UNDO / REDO -->
+        <div class="history-controls">
+          <button
+            class="btn-history"
+            onclick="undo()"
+            id="btnUndo"
+            title="Undo (Ctrl+Z)"
+          >
+            <i class="fas fa-undo"></i>
+          </button>
+          <button
+            class="btn-history"
+            onclick="redo()"
+            id="btnRedo"
+            title="Redo (Ctrl+Y)"
+          >
+            <i class="fas fa-redo"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- TOOLBAR -->
+      <div class="add-field-row">
+        <button class="btn-add" onclick="addField('text')">
+          <i class="fas fa-font"></i> Text
+        </button>
+        <button class="btn-add" onclick="addField('select')">
+          <i class="fas fa-list"></i> Select
+        </button>
+        <button class="btn-add" onclick="addField('checkbox')">
+          <i class="fas fa-check-square"></i> Check
+        </button>
+        <button class="btn-add" onclick="addField('textarea')">
+          <i class="fas fa-align-left"></i> Area
+        </button>
+        <button class="btn-add" onclick="addField('header')">
+          <i class="fas fa-heading"></i> Title
+        </button>
+        <button class="btn-add" onclick="addField('rating')">
+          <i class="fas fa-star"></i> Rate
+        </button>
+      </div>
+
+      <div class="fields-list" id="fieldsList"></div>
+
+      <div class="sidebar-footer">
+        <div class="tools-row">
+          <button class="btn-secondary" onclick="saveConfig()">
+            <i class="fas fa-save"></i> Save JSON
+          </button>
+          <button class="btn-secondary" onclick="triggerLoad()">
+            <i class="fas fa-folder-open"></i> Load JSON
+          </button>
+          <input
+            type="file"
+            id="configLoader"
+            style="display: none"
+            accept=".json"
+            onchange="loadConfig(this)"
+          />
         </div>
 
-        <div class="add-field-row">
-            <button class="btn-add" onclick="addField('text')">
-                <i class="fas fa-plus"></i> Text
-            </button>
-            <button class="btn-add" onclick="addField('select')">
-                <i class="fas fa-list"></i> Select
-            </button>
-            <button class="btn-add" onclick="addField('checkbox')">
-                <i class="fas fa-check-square"></i> Check
-            </button>
-            <button class="btn-add" onclick="addField('textarea')">
-                <i class="fas fa-align-left"></i> Area
-            </button>
-        </div>
-        
-        <div class="fields-list" id="fieldsList">
-            <!-- JS Generated -->
+        <div style="margin-bottom: 10px">
+          <label style="font-size: 10px; color: #94a3b8; font-weight: bold"
+            >FORM ACTION (URL):</label
+          >
+          <input
+            type="text"
+            id="formAction"
+            placeholder="https://formspree.io/f/..."
+            class="field-input"
+            oninput="saveHistory(); render();"
+          />
         </div>
 
-        <div class="sidebar-footer">
-            <div class="tools-row">
-                <button class="btn-secondary" onclick="saveConfig()" title="Download current settings">
-                    <i class="fas fa-save"></i> Save
-                </button>
-                <button class="btn-secondary" onclick="triggerLoad()" title="Load settings from file">
-                    <i class="fas fa-folder-open"></i> Load
-                </button>
-                <input type="file" id="configLoader" style="display: none;" accept=".json" onchange="loadConfig(this)">
-            </div>
+        <select
+          id="frameworkSelect"
+          class="framework-select"
+          style="
+            width: 100%;
+            padding: 10px;
+            background: #161b2c;
+            border: 1px solid #334155;
+            color: white;
+            border-radius: 6px;
+            margin-bottom: 10px;
+          "
+          onchange="render()"
+        >
+          <option value="css">HTML + Clean CSS</option>
+          <option value="bootstrap">Bootstrap 5</option>
+          <option value="tailwind">Tailwind CSS</option>
+          <option value="sheets">Google Sheets (JS Script)</option>
+          <!-- NUEVA OPCIÓN -->
+        </select>
 
-            <div style="font-size:12px; font-weight:bold; color:#868e96; margin-bottom:5px;">EXPORT AS:</div>
-            <select id="frameworkSelect" class="framework-select" onchange="render()">
-                <option value="css">HTML + CSS (Clean)</option>
-                <option value="bootstrap">Bootstrap 5</option>
-                <option value="tailwind">Tailwind CSS</option>
-            </select>
-            <button class="btn-main" onclick="showCode()">
-                <i class="fas fa-code"></i> Get Code
-            </button>
-        </div>
+        <button class="btn-main" onclick="showCode()">
+          <i class="fas fa-code"></i> GET CODE
+        </button>
+      </div>
     </div>
 
-    <!-- 2. PREVIEW -->
+    <!-- PREVIEW -->
     <div class="preview-area">
-        <div id="render-container"></div>
+      <!-- DEVICE TOGGLER -->
+      <div class="preview-toolbar">
+        <button
+          class="device-btn active"
+          onclick="setDevice('desktop')"
+          title="Desktop View"
+        >
+          <i class="fas fa-desktop"></i>
+        </button>
+        <button
+          class="device-btn"
+          onclick="setDevice('mobile')"
+          title="Mobile View"
+        >
+          <i class="fas fa-mobile-alt"></i>
+        </button>
+      </div>
+
+      <div id="render-container"></div>
     </div>
 
-    <!-- 3. MODAL -->
+    <!-- MODAL -->
     <div class="code-modal" id="codeModal">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h3 style="margin:0">Generated Code</h3>
-                <button class="btn-close" onclick="closeModal()">×</button>
-            </div>
-            <div class="modal-body">
-                <textarea id="finalCode" readonly></textarea>
-            </div>
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3>Generated Source Code</h3>
+          <button
+            class="btn-close"
+            style="
+              background: transparent;
+              border: none;
+              color: #94a3b8;
+              font-size: 20px;
+              cursor: pointer;
+            "
+            onclick="closeModal()"
+          >
+            ×
+          </button>
         </div>
+        <div class="modal-body">
+          <textarea id="finalCode" readonly></textarea>
+        </div>
+      </div>
     </div>
 
     <script>
-        window.fieldsData = {{ fields_json | safe }};
+      window.fieldsData = {{ fields_json | safe }};
     </script>
     <script src="{{ url_for('static', filename='js/editor.js') }}"></script>
     <script>
-        initSidebar();
-        render();
+      initSidebar();
+      render();
+      initHistory();
     </script>
-</body>
+  </body>
 </html>
