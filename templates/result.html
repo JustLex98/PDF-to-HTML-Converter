@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FormBuilder Pro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+</head>
+<body>
+
+    <!-- 1. SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>PDF<span class="logo-span">Form</span>Builder</h2>
+            <a href="/" class="back-link">← New</a>
+        </div>
+
+        <div class="add-field-row">
+            <button class="btn-add" onclick="addField('text')">
+                <i class="fas fa-plus"></i> Text
+            </button>
+            <button class="btn-add" onclick="addField('select')">
+                <i class="fas fa-list"></i> Select
+            </button>
+            <button class="btn-add" onclick="addField('checkbox')">
+                <i class="fas fa-check-square"></i> Check
+            </button>
+            <button class="btn-add" onclick="addField('textarea')">
+                <i class="fas fa-align-left"></i> Area
+            </button>
+        </div>
+        
+        <div class="fields-list" id="fieldsList">
+            <!-- JS Generated -->
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="tools-row">
+                <button class="btn-secondary" onclick="saveConfig()" title="Download current settings">
+                    <i class="fas fa-save"></i> Save
+                </button>
+                <button class="btn-secondary" onclick="triggerLoad()" title="Load settings from file">
+                    <i class="fas fa-folder-open"></i> Load
+                </button>
+                <input type="file" id="configLoader" style="display: none;" accept=".json" onchange="loadConfig(this)">
+            </div>
+
+            <div style="font-size:12px; font-weight:bold; color:#868e96; margin-bottom:5px;">EXPORT AS:</div>
+            <select id="frameworkSelect" class="framework-select" onchange="render()">
+                <option value="css">HTML + CSS (Clean)</option>
+                <option value="bootstrap">Bootstrap 5</option>
+                <option value="tailwind">Tailwind CSS</option>
+            </select>
+            <button class="btn-main" onclick="showCode()">
+                <i class="fas fa-code"></i> Get Code
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. PREVIEW -->
+    <div class="preview-area">
+        <div id="render-container"></div>
+    </div>
+
+    <!-- 3. MODAL -->
+    <div class="code-modal" id="codeModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 style="margin:0">Generated Code</h3>
+                <button class="btn-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <textarea id="finalCode" readonly></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.fieldsData = {{ fields_json | safe }};
+    </script>
+    <script src="{{ url_for('static', filename='js/editor.js') }}"></script>
+    <script>
+        initSidebar();
+        render();
+    </script>
+</body>
+</html>

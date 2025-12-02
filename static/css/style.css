@@ -1,0 +1,340 @@
+/* --- VARIABLES GLOBALES --- */
+:root {
+    --primary-color: #228be6;
+    --primary-hover: #1c7ed6;
+    --bg-color: #f8f9fa;
+    --sidebar-bg: #ffffff;
+    --border-color: #e9ecef;
+    --text-color: #333;
+    --danger-color: #fa5252;
+    --font-stack: 'Inter', 'Segoe UI', sans-serif;
+}
+
+/* --- RESET Y BASE --- */
+body {
+    font-family: var(--font-stack);
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
+    background: var(--bg-color);
+    color: var(--text-color);
+}
+
+/* --- SIDEBAR (EDITOR) --- */
+.sidebar {
+    width: 380px;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.02);
+}
+
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--sidebar-bg);
+}
+
+.sidebar-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.logo-span { color: #4dabf7; }
+
+.back-link {
+    color: #868e96;
+    text-decoration: none;
+    font-size: 12px;
+    transition: color 0.2s;
+}
+.back-link:hover { color: var(--primary-color); }
+
+/* --- LISTA DE CAMPOS (DRAG & DROP) --- */
+.fields-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+    background: var(--bg-color);
+}
+
+.fields-list::-webkit-scrollbar { width: 6px; }
+.fields-list::-webkit-scrollbar-thumb { background: #dee2e6; border-radius: 4px; }
+
+/* Tarjeta Individual */
+.field-card {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.field-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border-color: #a5d8ff;
+}
+
+/* Estado fantasma al arrastrar */
+.field-card.sortable-ghost {
+    opacity: 0.4;
+    background: #e7f5ff;
+    border: 2px dashed #4dabf7;
+}
+
+.card-header-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.drag-handle { cursor: grab; color: #adb5bd; margin-right: 10px; }
+.drag-handle:active { cursor: grabbing; }
+
+.field-id {
+    font-size: 11px;
+    color: #868e96;
+    flex: 1;
+    font-family: monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.btn-delete {
+    color: var(--danger-color);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 5px;
+    opacity: 0.5;
+    transition: 0.2s;
+}
+.btn-delete:hover { opacity: 1; background: #fff5f5; border-radius: 4px; }
+
+.field-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+.field-input:focus { outline: none; border-color: #4dabf7; }
+
+/* Controles de Ancho */
+.width-controls {
+    display: flex;
+    background: #f1f3f5;
+    padding: 3px;
+    border-radius: 6px;
+}
+
+.width-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    color: #495057;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.width-btn:hover { background: #e9ecef; }
+
+.width-btn.active {
+    background: #fff;
+    color: #1971c2;
+    font-weight: 700;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* --- FOOTER DEL SIDEBAR --- */
+.sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid var(--border-color);
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.framework-select {
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    width: 100%;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.btn-main {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    transition: 0.2s;
+}
+.btn-main:hover { background: var(--primary-hover); transform: translateY(-1px); }
+
+/* --- ÁREA DE VISTA PREVIA --- */
+.preview-area {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+    display: block; /* Importante para scroll */
+    background-image: radial-gradient(#dee2e6 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+#render-container {
+    background: white;
+    width: 850px;
+    min-height: 1000px;
+    height: auto;
+    padding: 60px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+    border-radius: 2px;
+    border-top: 5px solid #4dabf7;
+    margin: 0 auto 50px auto; /* Centrado y margen inferior */
+    overflow: visible;
+}
+
+/* --- MODAL DE CÓDIGO --- */
+.code-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    backdrop-filter: blur(3px);
+}
+
+.modal-box {
+    background: white;
+    width: 800px;
+    height: 80vh;
+    border-radius: 12px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+}
+
+.modal-header {
+    padding: 15px 25px;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f9fa;
+}
+
+.modal-body { flex: 1; padding: 0; }
+
+.modal-body textarea {
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding: 25px;
+    font-family: 'Consolas', monospace;
+    font-size: 13px;
+    color: #333;
+    background: #fff;
+    resize: none;
+    box-sizing: border-box;
+}
+.modal-body textarea:focus { outline: none; }
+
+.btn-close {
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    cursor: pointer;
+    color: #868e96;
+}
+
+.tools-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.btn-secondary {
+    flex: 1;
+    background: #f1f3f5;
+    color: #495057;
+    border: 1px solid #dee2e6;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: 0.2s;
+}
+
+.btn-secondary:hover {
+    background: #e9ecef;
+    color: #212529;
+    border-color: #ced4da;
+}
+
+.add-field-row {
+    display: flex;
+    gap: 5px;
+    padding: 10px 15px;
+    background: #f1f3f5;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.btn-add {
+    flex: 1;
+    background: white;
+    border: 1px dashed #adb5bd;
+    color: #495057;
+    padding: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.btn-add:hover {
+    border-color: #228be6;
+    color: #228be6;
+    background: #e7f5ff;
+}

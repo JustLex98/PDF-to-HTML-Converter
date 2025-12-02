@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>New Project - PDFFormBuilder</title>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: #f8f9fa;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+      }
+      .card {
+        background: white;
+        padding: 50px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        text-align: center;
+        max-width: 450px;
+        width: 100%;
+        border: 1px solid #e9ecef;
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 10px;
+        font-size: 24px;
+      }
+      p {
+        color: #6c757d;
+        margin-bottom: 30px;
+      }
+
+      .upload-area {
+        border: 2px dashed #adb5bd;
+        border-radius: 8px;
+        padding: 40px 20px;
+        background: #f8f9fa;
+        cursor: pointer;
+        transition: 0.2s;
+        margin-bottom: 20px;
+      }
+      .upload-area:hover {
+        border-color: #228be6;
+        background: #e7f5ff;
+      }
+
+      .icon-upload {
+        font-size: 40px;
+        color: #228be6;
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      input[type="file"] {
+        display: none;
+      }
+
+      button {
+        background: #228be6;
+        color: white;
+        padding: 15px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        transition: 0.2s;
+        margin-top: 33px; 
+      }
+      button:hover {
+        background: #1c7ed6;
+        transform: translateY(-1px);
+      }
+    </style>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="card">
+      <h1>PDF Form Builder</h1>
+      <p>Convert PDF forms to editable HTML in seconds.</p>
+
+      <form method="POST" enctype="multipart/form-data">
+        <label class="upload-area">
+          <i class="fas fa-cloud-upload-alt icon-upload"></i>
+          <span id="fileName">Click to upload your PDF</span>
+          <input
+            type="file"
+            name="pdf_file"
+            accept=".pdf"
+            required
+            onchange="updateName(this)"
+          />
+        </label>
+        <button type="submit">Start Editing</button>
+      </form>
+    </div>
+
+    <script>
+      function updateName(input) {
+        if (input.files && input.files[0]) {
+          document.getElementById(
+            "fileName"
+          ).innerHTML = `<span style="color:#228be6; font-weight:bold;">${input.files[0].name}</span>`;
+        }
+      }
+    </script>
+  </body>
+</html>
