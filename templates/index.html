@@ -2,114 +2,309 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>New Project - PDFFormBuilder</title>
+    <title>PDF Form Builder - AI Powered</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
     <style>
+      :root {
+        --brand: #3b82f6;
+        --brand-hover: #2563eb;
+        --dark-bg: #0f172a;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+      }
+
       body {
-        font-family: "Segoe UI", sans-serif;
-        background: #f8f9fa;
+        font-family: "Inter", sans-serif;
+        background: var(--dark-bg);
+        /* Fondo con gradientes sutiles */
+        background-image: radial-gradient(
+            at 0% 0%,
+            hsla(253, 16%, 7%, 1) 0,
+            transparent 50%
+          ),
+          radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 1) 0, transparent 50%),
+          radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 1) 0, transparent 50%);
         height: 100vh;
+        margin: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0;
+        color: var(--text-main);
+        overflow: hidden;
       }
-      .card {
-        background: white;
-        padding: 50px;
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+
+      .container {
+        max-width: 1000px;
+        width: 90%;
+        display: grid;
+        grid-template-columns: 1.2fr 1fr; /* Más espacio al texto */
+        gap: 80px;
+        align-items: center;
+      }
+
+      /* --- TEXTO DE LA IZQUIERDA --- */
+      .hero-text h1 {
+        font-size: 56px; /* Texto más grande e impactante */
+        line-height: 1.1;
+        margin-bottom: 25px;
+        font-weight: 800;
+        background: linear-gradient(to right, #60a5fa, #a78bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -1px;
+      }
+
+      .hero-text p {
+        color: var(--text-muted);
+        font-size: 18px;
+        margin-bottom: 40px;
+        line-height: 1.6;
+        max-width: 90%;
+      }
+
+      .features {
+        display: flex;
+        gap: 25px;
+      }
+      .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #cbd5e1;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 8px 16px;
+        border-radius: 50px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .feature-item i {
+        color: var(--brand);
+      }
+
+      /* --- TARJETA DE SUBIDA (DERECHA) --- */
+      .upload-card {
+        background: rgba(30, 41, 59, 0.6);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+
+        padding: 30px; /* ANTES: 40px */
+
+        border-radius: 20px; /* Bordes un poco menos redondos */
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         text-align: center;
-        max-width: 450px;
-        width: 100%;
-        border: 1px solid #e9ecef;
-      }
-      h1 {
-        color: #333;
-        margin-bottom: 10px;
-        font-size: 24px;
-      }
-      p {
-        color: #6c757d;
-        margin-bottom: 30px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px; /* Menos espacio entre elementos */
       }
 
+      .upload-card h3 {
+        margin: 0;
+        font-size: 20px;
+        color: white;
+      }
+
+      .upload-card p {
+        margin: 0;
+        font-size: 14px;
+        color: var(--text-muted);
+      }
+
+      /* Área punteada interactiva */
       .upload-area {
-        border: 2px dashed #adb5bd;
-        border-radius: 8px;
-        padding: 40px 20px;
-        background: #f8f9fa;
+        border: 2px dashed #475569;
+        border-radius: 12px;
+        background: rgba(15, 23, 42, 0.3);
         cursor: pointer;
-        transition: 0.2s;
-        margin-bottom: 20px;
-      }
-      .upload-area:hover {
-        border-color: #228be6;
-        background: #e7f5ff;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        height: 140px; /* ANTES: 200px -> Mucho más compacto */
+        margin-top: 5px;
+        margin-bottom: 5px;
       }
 
-      .icon-upload {
-        font-size: 40px;
-        color: #228be6;
-        margin-bottom: 15px;
-        display: block;
+      .upload-area:hover,
+      .upload-area.dragover {
+        border-color: var(--brand);
+        background: rgba(59, 130, 246, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .icon-box {
+        width: 48px;
+        height: 48px;
+        background: #1e293b;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--brand);
+        font-size: 20px;
+        border: 1px solid #334155;
+        transition: 0.3s;
       }
 
       input[type="file"] {
         display: none;
       }
 
-      button {
-        background: #228be6;
+      /* Botón de Acción */
+      .btn-start {
+        background: var(--brand);
         color: white;
-        padding: 15px;
         border: none;
-        border-radius: 6px;
-        font-size: 16px;
+        padding: 14px;
+        width: 100%;
+        border-radius: 10px;
+        font-size: 15px;
         font-weight: 600;
         cursor: pointer;
-        width: 100%;
-        transition: 0.2s;
-        margin-top: 33px; 
+        transition: all 0.2s;
+        opacity: 0.5;
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
       }
-      button:hover {
-        background: #1c7ed6;
-        transform: translateY(-1px);
+
+      .btn-start.active {
+        opacity: 1;
+        pointer-events: all;
+        box-shadow: 0 0 25px rgba(59, 130, 246, 0.5);
+      }
+      .btn-start:hover {
+        background: var(--brand-hover);
+        transform: translateY(-2px);
+      }
+
+      /* Responsive */
+      @media (max-width: 900px) {
+        .container {
+          grid-template-columns: 1fr;
+          text-align: center;
+          gap: 40px;
+        }
+        .hero-text h1 {
+          font-size: 40px;
+        }
+        .features {
+          justify-content: center;
+        }
+        .hero-text p {
+          margin-left: auto;
+          margin-right: auto;
+        }
       }
     </style>
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-      rel="stylesheet"
-    />
   </head>
   <body>
-    <div class="card">
-      <h1>PDF Form Builder</h1>
-      <p>Convert PDF forms to editable HTML in seconds.</p>
+    <div class="container">
+      <!-- Texto Izquierda -->
+      <div class="hero-text">
+        <h1>Turn Static PDFs <br />into Dynamic HTML.</h1>
+        <p>
+          Don't waste time coding forms manually. Use AI to extract, rename, and
+          export your PDF forms to Bootstrap or Tailwind in seconds.
+        </p>
 
-      <form method="POST" enctype="multipart/form-data">
-        <label class="upload-area">
-          <i class="fas fa-cloud-upload-alt icon-upload"></i>
-          <span id="fileName">Click to upload your PDF</span>
-          <input
-            type="file"
-            name="pdf_file"
-            accept=".pdf"
-            required
-            onchange="updateName(this)"
-          />
-        </label>
-        <button type="submit">Start Editing</button>
-      </form>
+        <div class="features">
+          <div class="feature-item">
+            <i class="fas fa-robot"></i> AI Powered
+          </div>
+          <div class="feature-item"><i class="fas fa-code"></i> Clean Code</div>
+          <div class="feature-item">
+            <i class="fas fa-shield-alt"></i> Secure
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta Derecha -->
+      <div class="upload-card">
+        <form method="POST" enctype="multipart/form-data">
+          <h3>Upload Document</h3>
+          <p>PDF files only (Max 10MB)</p>
+
+          <label class="upload-area" id="dropZone">
+            <div class="icon-box"><i class="fas fa-cloud-upload-alt"></i></div>
+            <span
+              id="fileName"
+              style="font-size: 14px; color: #cbd5e1; font-weight: 500"
+            >
+              Click or Drag & Drop PDF here
+            </span>
+            <input
+              type="file"
+              name="pdf_file"
+              accept=".pdf"
+              required
+              onchange="handleFile(this)"
+            />
+          </label>
+
+          <button type="submit" class="btn-start" id="submitBtn">
+            Start Editing <i class="fas fa-arrow-right"></i>
+          </button>
+        </form>
+      </div>
     </div>
 
     <script>
-      function updateName(input) {
+      function handleFile(input) {
+        const fileNameSpan = document.getElementById("fileName");
+        const submitBtn = document.getElementById("submitBtn");
+        const iconBox = document.querySelector(".icon-box");
+
         if (input.files && input.files[0]) {
-          document.getElementById(
-            "fileName"
-          ).innerHTML = `<span style="color:#228be6; font-weight:bold;">${input.files[0].name}</span>`;
+          // Actualizar nombre
+          fileNameSpan.innerHTML = `<span style="color:#60a5fa; font-weight:bold;">${input.files[0].name}</span>`;
+
+          // Cambiar icono a Check verde
+          iconBox.innerHTML =
+            '<i class="fas fa-check" style="color:#10b981;"></i>';
+          iconBox.style.borderColor = "#10b981";
+          iconBox.style.background = "rgba(16, 185, 129, 0.1)";
+
+          // Activar botón con animación
+          submitBtn.classList.add("active");
         }
       }
+
+      // Lógica visual para Drag & Drop
+      const dropZone = document.getElementById("dropZone");
+
+      ["dragenter", "dragover"].forEach((eventName) => {
+        dropZone.addEventListener(
+          eventName,
+          (e) => {
+            e.preventDefault();
+            dropZone.classList.add("dragover");
+          },
+          false
+        );
+      });
+
+      ["dragleave", "drop"].forEach((eventName) => {
+        dropZone.addEventListener(
+          eventName,
+          (e) => {
+            dropZone.classList.remove("dragover");
+          },
+          false
+        );
+      });
     </script>
   </body>
 </html>

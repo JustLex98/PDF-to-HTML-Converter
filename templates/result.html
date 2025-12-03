@@ -3,187 +3,243 @@
   <head>
     <meta charset="UTF-8" />
     <title>FormBuilder Pro</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
       rel="stylesheet"
     />
+
+    <!-- Librerías: Sortable, Toastify y HTML2PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='css/style.css') }}"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
     />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/toastify-js"
+    ></script>
   </head>
   <body>
-    <!-- SIDEBAR -->
-    <div class="sidebar">
+    <button
+      class="floating-menu-btn"
+      id="openSidebarBtn"
+      onclick="toggleSidebar()"
+      title="Open Menu"
+    >
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="sidebar" id="sidebar">
       <div class="sidebar-header">
         <div class="brand-area">
-          <h2>PDF<span class="logo-span">Builder</span></h2>
-          <a href="/" class="back-link">← New Project</a>
+          <h2>PDF<span class="logo-span">Form</span>Builder</h2>
         </div>
-        <!-- UNDO / REDO -->
-        <div class="history-controls">
+        <div style="display: flex; align-items: center; gap: 10px">
+          <div class="history-controls">
+            <button
+              class="btn-history"
+              id="btnUndo"
+              onclick="undo()"
+              title="Undo"
+              disabled
+            >
+              <i class="fas fa-undo"></i>
+            </button>
+            <button
+              class="btn-history"
+              id="btnRedo"
+              onclick="redo()"
+              title="Redo"
+              disabled
+            >
+              <i class="fas fa-redo"></i>
+            </button>
+          </div>
           <button
-            class="btn-history"
-            onclick="undo()"
-            id="btnUndo"
-            title="Undo (Ctrl+Z)"
+            class="btn-collapse"
+            onclick="toggleSidebar()"
+            title="Collapse"
           >
-            <i class="fas fa-undo"></i>
-          </button>
-          <button
-            class="btn-history"
-            onclick="redo()"
-            id="btnRedo"
-            title="Redo (Ctrl+Y)"
-          >
-            <i class="fas fa-redo"></i>
+            <i class="fas fa-chevron-left"></i>
           </button>
         </div>
       </div>
 
-      <!-- TOOLBAR -->
       <div class="add-field-row">
-        <button class="btn-add" onclick="addField('text')">
+        <div class="btn-add" onclick="addField('text')">
           <i class="fas fa-font"></i> Text
-        </button>
-        <button class="btn-add" onclick="addField('select')">
-          <i class="fas fa-list"></i> Select
-        </button>
-        <button class="btn-add" onclick="addField('checkbox')">
+        </div>
+        <div class="btn-add" onclick="addField('textarea')">
+          <i class="fas fa-paragraph"></i> Area
+        </div>
+        <div class="btn-add" onclick="addField('select')">
+          <i class="fas fa-list"></i> List
+        </div>
+        <div class="btn-add" onclick="addField('radio')">
+          <i class="fas fa-dot-circle"></i> Radio
+        </div>
+        <div class="btn-add" onclick="addField('checkbox')">
           <i class="fas fa-check-square"></i> Check
-        </button>
-        <button class="btn-add" onclick="addField('textarea')">
-          <i class="fas fa-align-left"></i> Area
-        </button>
-        <button class="btn-add" onclick="addField('header')">
-          <i class="fas fa-heading"></i> Title
-        </button>
-        <button class="btn-add" onclick="addField('rating')">
-          <i class="fas fa-star"></i> Rate
-        </button>
+        </div>
       </div>
 
       <div class="fields-list" id="fieldsList"></div>
 
       <div class="sidebar-footer">
-        <div class="tools-row">
-          <button class="btn-secondary" onclick="saveConfig()">
-            <i class="fas fa-save"></i> Save JSON
-          </button>
-          <button class="btn-secondary" onclick="triggerLoad()">
-            <i class="fas fa-folder-open"></i> Load JSON
-          </button>
-          <input
-            type="file"
-            id="configLoader"
-            style="display: none"
-            accept=".json"
-            onchange="loadConfig(this)"
-          />
-        </div>
-
-        <div style="margin-bottom: 10px">
-          <label style="font-size: 10px; color: #94a3b8; font-weight: bold"
-            >FORM ACTION (URL):</label
+        <!-- 1. Configuración de Envío -->
+        <div style="margin-bottom: 15px">
+          <label
+            style="
+              font-size: 11px;
+              font-weight: bold;
+              color: #94a3b8;
+              display: block;
+              margin-bottom: 5px;
+            "
           >
+            SEND FORM TO (Email/URL):
+          </label>
           <input
             type="text"
             id="formAction"
-            placeholder="https://formspree.io/f/..."
             class="field-input"
-            oninput="saveHistory(); render();"
+            placeholder="https://formspree.io/f/your_id"
+            oninput="render()"
           />
+          <div style="font-size: 10px; color: #64748b; margin-top: 3px">
+            Tip: Use
+            <a
+              href="https://formspree.io"
+              target="_blank"
+              style="color: #3b82f6"
+              >Formspree</a
+            >
+            for emails.
+          </div>
         </div>
 
-        <select
-          id="frameworkSelect"
-          class="framework-select"
+        <!-- 2. Botón IA -->
+        <button
+          id="btnAI"
+          class="btn-main"
+          onclick="runAIRename()"
           style="
-            width: 100%;
-            padding: 10px;
-            background: #161b2c;
-            border: 1px solid #334155;
-            color: white;
-            border-radius: 6px;
-            margin-bottom: 10px;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            margin-bottom: 15px;
+            border: none;
           "
-          onchange="render()"
         >
-          <option value="css">HTML + Clean CSS</option>
-          <option value="bootstrap">Bootstrap 5</option>
-          <option value="tailwind">Tailwind CSS</option>
-          <option value="sheets">Google Sheets (JS Script)</option>
-          <!-- NUEVA OPCIÓN -->
-        </select>
+          <i class="fas fa-magic"></i> Auto-Rename with AI
+        </button>
 
-        <button class="btn-main" onclick="showCode()">
-          <i class="fas fa-code"></i> GET CODE
+        <!-- 3. Color Picker -->
+        <div
+          style="
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          "
+        >
+          <label style="font-size: 11px; font-weight: bold; color: #868e96"
+            >BRAND COLOR:</label
+          >
+          <div class="color-picker-wrapper">
+            <input
+              type="color"
+              id="brandColor"
+              value="#0F6CBD"
+              onchange="updateBrandColor(this.value)"
+            />
+          </div>
+        </div>
+
+        <!-- 4. CAMBIO IMPORTANTE: Input oculto fijo en 'css' -->
+        <!-- Hemos quitado el <select> y dejado esto fijo -->
+        <input type="hidden" id="frameworkSelect" value="css" />
+
+        <button
+          class="btn-secondary"
+          onclick="showCode()"
+          style="width: 100%; justify-content: center"
+        >
+          <i class="fas fa-code"></i> View Source Code
         </button>
       </div>
     </div>
 
-    <!-- PREVIEW -->
     <div class="preview-area">
-      <!-- DEVICE TOGGLER -->
       <div class="preview-toolbar">
-        <button
-          class="device-btn active"
-          onclick="setDevice('desktop')"
-          title="Desktop View"
-        >
-          <i class="fas fa-desktop"></i>
+        <button class="device-btn active" onclick="setDevice('desktop', this)">
+          <i class="fas fa-desktop"></i> Desktop
         </button>
-        <button
-          class="device-btn"
-          onclick="setDevice('mobile')"
-          title="Mobile View"
-        >
-          <i class="fas fa-mobile-alt"></i>
+        <button class="device-btn" onclick="setDevice('mobile', this)">
+          <i class="fas fa-mobile-alt"></i> Mobile
+        </button>
+      </div>
+
+      <!-- Barra de Acciones Superior -->
+      <div class="oasis-actions">
+        <button class="btn-oasis primary" onclick="downloadPDF()">
+          <i class="fas fa-download"></i> Download PDF
+        </button>
+        <button class="btn-oasis secondary" onclick="printForm()">
+          <i class="fas fa-print"></i> Print Form
+        </button>
+        <button class="btn-oasis secondary" onclick="downloadFile()">
+          <i class="fas fa-file-code"></i> Save as HTML
         </button>
       </div>
 
       <div id="render-container"></div>
     </div>
 
-    <!-- MODAL -->
     <div class="code-modal" id="codeModal">
       <div class="modal-box">
         <div class="modal-header">
-          <h3>Generated Source Code</h3>
+          <h3 style="margin: 0">Generated Code</h3>
           <button
-            class="btn-close"
-            style="
-              background: transparent;
-              border: none;
-              color: #94a3b8;
-              font-size: 20px;
-              cursor: pointer;
-            "
+            class="btn-history"
             onclick="closeModal()"
+            style="border: none; font-size: 18px"
           >
-            ×
+            ✕
           </button>
         </div>
         <div class="modal-body">
           <textarea id="finalCode" readonly></textarea>
+        </div>
+        <div
+          style="
+            padding: 15px 25px;
+            border-top: 1px solid #334155;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            background: #0f172a;
+          "
+        >
+          <button class="btn-secondary" onclick="copyToClipboard()">
+            Copy to Clipboard
+          </button>
         </div>
       </div>
     </div>
 
     <script>
       window.fieldsData = {{ fields_json | safe }};
+      window.currentFilename = "{{ filename }}";
     </script>
     <script src="{{ url_for('static', filename='js/editor.js') }}"></script>
-    <script>
-      initSidebar();
-      render();
-      initHistory();
-    </script>
   </body>
 </html>

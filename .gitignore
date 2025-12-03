@@ -1,0 +1,21 @@
+# 1. SEGURIDAD (Lo más importante)
+.env
+.env.local
+
+# 2. Entorno Virtual (No subir, pesa mucho y es específico de tu PC)
+venv/
+env/
+__pycache__/
+*.pyc
+
+# 3. Archivos subidos por usuarios (No queremos basura en el repo)
+static/uploads/*
+!static/uploads/.gitkeep
+
+# 4. Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# 5. Archivos de pruebas durante development
+inspect_pdf.py
+check_models.py
